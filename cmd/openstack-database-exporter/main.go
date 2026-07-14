@@ -97,6 +97,10 @@ var (
 		"nova.default-quota-ram",
 		"Default Nova RAM quota (in MB) when no quota_classes entry exists in the DB.",
 	).Default("51200").Envar("NOVA_DEFAULT_QUOTA_RAM").Int()
+	keystoneRegion = kingpin.Flag(
+		"keystone.region",
+		"Keystone region ID for filtering unified limits. Empty string matches global (region_id IS NULL) limits.",
+	).Default("").Envar("KEYSTONE_REGION").String()
 )
 
 func main() {
@@ -133,6 +137,7 @@ func main() {
 			Cores:     *novaDefaultCores,
 			RAM:       *novaDefaultRAM,
 		},
+		KeystoneRegion: *keystoneRegion,
 	}, logger)
 
 	http.Handle(*metricsPath, promhttp.HandlerFor(reg, promhttp.HandlerOpts{}))

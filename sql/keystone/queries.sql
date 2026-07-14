@@ -46,3 +46,24 @@ SELECT
     name,
     COALESCE(description, '') as description
 FROM `group`;
+
+-- name: GetRegisteredLimits :many
+SELECT DISTINCT
+    rl.resource_name,
+    rl.default_limit
+FROM registered_limit rl
+INNER JOIN service s ON rl.service_id = s.id
+WHERE s.type = 'compute'
+  AND (rl.region_id = sqlc.arg(region_id) OR (rl.region_id IS NULL AND sqlc.arg(region_id) = ''));
+
+-- name: GetProjectLimits :many
+SELECT
+    l.project_id,
+    rl.resource_name,
+    l.resource_limit
+FROM `limit` l
+INNER JOIN registered_limit rl ON l.registered_limit_id = rl.id
+INNER JOIN service s ON rl.service_id = s.id
+WHERE s.type = 'compute'
+  AND l.project_id IS NOT NULL
+  AND (rl.region_id = sqlc.arg(region_id) OR (rl.region_id IS NULL AND sqlc.arg(region_id) = ''))

@@ -16,3 +16,18 @@ func DefaultDefaultQuotas() DefaultQuotas {
 		RAM:       51200,
 	}
 }
+
+// unifiedLimitToNova maps Keystone unified limit resource names to Nova quota
+// resource names. Returns false for resources not relevant to Nova limits.
+func unifiedLimitToNova(resource string) (string, bool) {
+	switch resource {
+	case "servers":
+		return "instances", true
+	case "class:VCPU":
+		return "cores", true
+	case "class:MEMORY_MB":
+		return "ram", true
+	default:
+		return "", false
+	}
+}
