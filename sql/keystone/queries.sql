@@ -7,7 +7,7 @@ SELECT
     p.domain_id,
     COALESCE(p.parent_id, '') as parent_id,
     p.is_domain,
-    COALESCE(GROUP_CONCAT(pt.name SEPARATOR ','), '') as tags
+    CAST(COALESCE(GROUP_CONCAT(pt.name SEPARATOR ','), '') AS CHAR) as tags
 FROM project p
 LEFT JOIN project_tag pt ON p.id = pt.project_id
 WHERE p.is_domain = 0
